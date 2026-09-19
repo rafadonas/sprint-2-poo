@@ -1,6 +1,6 @@
-/**
- * Representa o serviço de roçada feita por máquinas.
- */
+package model;
+
+/** Serviço de roçada realizado por máquinas. */
 public class RocadaMecanizada extends IntervencaoOperacional {
     public RocadaMecanizada() {
         super("Roçada Mecanizada");

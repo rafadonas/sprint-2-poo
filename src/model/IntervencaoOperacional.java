@@ -1,10 +1,10 @@
-/**
- * Classe abstrata que representa uma intervenção na rodovia.
- */
+package model;
+
+/** Classe abstrata mantida da Sprint 2 para os serviços operacionais. */
 public abstract class IntervencaoOperacional {
     private final String tipo;
 
-    public IntervencaoOperacional(String tipo) {
+    protected IntervencaoOperacional(String tipo) {
         this.tipo = tipo;
     }
 
@@ -12,8 +12,5 @@ public abstract class IntervencaoOperacional {
         return tipo;
     }
 
-    /**
-     * Método abstrato para executar o serviço específico.
-     */
     public abstract String executarServico();
 }

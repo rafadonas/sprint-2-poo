@@ -1,0 +1,4 @@
+# Copie este arquivo para db.properties e substitua pelos dados do laboratório.
+db.url=jdbc:oracle:thin:@//host:1521/servico
+db.usuario=seu_usuario
+db.senha=sua_senha

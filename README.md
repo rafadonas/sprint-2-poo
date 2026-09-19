@@ -1,50 +1,87 @@
-# Sistema de Monitoramento e Priorização de Roçada (Sprint 2)
+# MOTIVA — Sprint 3
 
-Este projeto faz parte do Challenge Sprint 2 e foca no desenvolvimento de um "Motor de Regras" para o monitoramento de vegetação em rodovias, utilizando conceitos avançados de Programação Orientada a Objetos (POO) em Java.
+Sistema acadêmico de monitoramento e priorização de roçada em rodovias. Nesta sprint, o projeto das Sprints 1 e 2 foi organizado em pacotes e passou a persistir equipes, trechos, intervenções e relatórios em um banco Oracle usando JDBC puro.
 
-## 🚀 Objetivo
-Automatizar a identificação de trechos de rodovia que necessitam de intervenção (roçada manual ou mecanizada) com base no crescimento da vegetação, que varia conforme o clima de cada região.
+## Requisitos
 
-## 🛠️ Tecnologias e Conceitos Utilizados
-- **Java 17+**: Linguagem base.
-- **Classes Abstratas**: Para modelar intervenções genéricas que não podem ser instanciadas.
-- **Interfaces**: Para definir o contrato de monitoramento IoT, permitindo o desacoplamento.
-- **Herança e Polimorfismo**: Para tratar diferentes tipos de trechos e intervenções de forma uniforme.
-- **Enums**: Para gerenciar comportamentos de crescimento baseados no clima (Úmido, Seco, Normal).
+- JDK 17 ou superior;
+- Oracle Database disponível no laboratório;
+- driver `ojdbc17.jar` compatível com o Oracle usado;
+- usuário com permissão para criar tabelas e sequences no próprio schema.
 
-## 📂 Estrutura de Arquivos (Pasta `src/`)
-- `Main.java`: Ponto de entrada que simula o cenário e executa o motor.
-- `IntervencaoOperacional.java`: Classe **Abstrata** base para os serviços.
-- `RocadaMecanizada.java`: Implementação de serviço pesado.
-- `Pulverizacao.java`: Implementação de serviço químico/preventivo.
-- `MonitoravelViaIoT.java`: **Interface** que define o comportamento de sensores.
-- `TrechoRodovia.java`: Modelo base de um trecho de estrada.
-- `TrechoRodoviaMonitorado.java`: Trecho que herda de rodovia e implementa a interface IoT.
-- `TipoClima.java`: Enum com os fatores de crescimento.
-- `MotorPriorizacao.java`: O algoritmo que analisa os dados e gera o relatório.
+## Estrutura
 
-## 🏁 Como Executar
-No terminal, dentro da pasta raiz do projeto, utilize os seguintes comandos:
-
-1. **Compilar os arquivos:**
-```bash
-javac src/*.java
+```text
+src/
+├── db/       # conexão singleton com o Oracle
+├── dao/      # DAOs com inserir, buscar, listar, atualizar e deletar
+├── model/    # classes de domínio, records e enums
+├── service/  # geração e persistência do relatório
+└── main/     # demonstração completa do sistema
 ```
 
-2. **Executar o programa:**
-```bash
-java -cp src Main
+Os DTOs de persistência são `record`s imutáveis. `TrechoRodovia` continua sendo uma classe porque mantém o comportamento de crescimento e a herança de `TrechoRodoviaMonitorado` criada na Sprint 2.
+
+## 1. Preparar o Oracle
+
+Os scripts recriam as tabelas do projeto. Portanto, o primeiro script apaga dados anteriores dessas quatro tabelas.
+
+Execute, nesta ordem, usando SQL Developer, SQLcl ou a ferramenta disponibilizada no laboratório:
+
+1. `seu-script-criacao.sql`;
+2. `seu-script-dados.sql`.
+
+O segundo script faz `COMMIT` e termina com consultas que permitem conferir a carga de teste.
+
+## 2. Configurar a conexão
+
+1. Copie `ojdbc17.jar` para a pasta `lib/` (o JAR não é versionado no Git).
+2. Copie `db.properties.example` para `db.properties`.
+3. Preencha URL, usuário e senha fornecidos pela faculdade:
+
+```properties
+db.url=jdbc:oracle:thin:@//host:1521/servico
+db.usuario=seu_usuario
+db.senha=sua_senha
 ```
 
-## 🧠 Perguntas de Reflexão (Respostas)
+O arquivo `db.properties` é ignorado pelo Git para proteger a senha. Também é possível usar as variáveis `MOTIVA_DB_URL`, `MOTIVA_DB_USUARIO` e `MOTIVA_DB_SENHA`, ou as propriedades Java `motiva.db.url`, `motiva.db.usuario` e `motiva.db.senha`.
 
-### 1. Por que não faz sentido para a Motiva que uma equipe execute apenas uma "Intervenção Operacional" genérica sem especificar qual é?
-**Resposta:** Na arquitetura do sistema, `IntervencaoOperacional` é uma abstração pura. No mundo real, uma ordem de serviço precisa de especificidade: você não envia uma equipe para "fazer algo genérico", você envia para "fazer roçada mecanizada" ou "pulverizar". Ao marcar a classe como `abstract`, garantimos que o sistema nunca crie uma intervenção vazia ou incompleta, forçando a definição de um tipo concreto que contenha a lógica específica de execução.
+## 3. Compilar e executar
 
-### 2. Qual a diferença arquitetural entre fazer um Trecho herdar de uma classe abstrata vs. implementar uma Interface?
-**Resposta:** 
-- **Herança (Classe Abstrata):** Representa o que o objeto **É** (um TrechoRodovia). Ela permite o reuso de código (como os atributos `km` e `altura`) e estabelece uma relação de "é um".
-- **Interface:** Representa o que o objeto **CONSEGUE FAZER** (um contrato de comportamento). Ao usar a interface `MonitoravelViaIoT`, estamos dizendo que aquele trecho tem a *capacidade* de transmitir dados. Isso permite que outros objetos (que talvez não sejam trechos de rodovia, como um caminhão da frota) também possam ser "Monitoráveis" no futuro sem precisar herdar da mesma árvore genealógica de classes.
+No PowerShell, a partir da raiz do projeto:
 
----
-*Projeto desenvolvido para fins acadêmicos - Sprint 2 POO.*
+```powershell
+$fontes = Get-ChildItem -Recurse -Filter *.java src | ForEach-Object FullName
+javac -encoding UTF-8 -d out $fontes
+java -cp "out;lib/ojdbc17.jar" main.Main
+```
+
+No Linux/macOS, troque o separador de classpath `;` por `:`.
+
+Para executar o teste unitário do gerador sem acessar o Oracle:
+
+```powershell
+$fontes = Get-ChildItem -Recurse -Filter *.java src,test | ForEach-Object FullName
+javac -encoding UTF-8 -d out $fontes
+java -ea -cp out service.GeradorRelatorioTest
+```
+
+O `Main`:
+
+1. testa a conexão;
+2. demonstra inserir, buscar, listar, atualizar e deletar equipes;
+3. demonstra o CRUD de trechos;
+4. demonstra o CRUD de intervenções;
+5. gera o relatório no console e o salva no Oracle;
+6. consulta o histórico de relatórios;
+7. encerra a conexão.
+
+## Regras de prioridade
+
+- **Urgente:** altura maior que 50 cm;
+- **Crítico:** altura maior que 40 cm e até 50 cm;
+- **Atenção:** altura maior que 30 cm e até 40 cm;
+- **Normal:** altura de até 30 cm.
+
+Todos os comandos dos DAOs usam `PreparedStatement`, e `PreparedStatement`/`ResultSet` são fechados com `try-with-resources`.
