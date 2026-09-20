@@ -2,6 +2,15 @@
 
 Sistema acadêmico de monitoramento e priorização de roçada em rodovias. Nesta sprint, o projeto das Sprints 1 e 2 foi organizado em pacotes e passou a persistir equipes, trechos, intervenções e relatórios em um banco Oracle usando JDBC puro.
 
+## Integrantes do grupo
+
+- Pedro Henrique dos Santos Cardoso — RM 563268
+- Gabriel Gibin Leoncio — RM 565462
+- Rafael do Nascimento Silva — RM 566263
+- Rai Augusto Ribeiro — RM 562870
+- Guilherme Morais de Assis — RM 564198
+- Lucas Werpp Franco — RM 556044
+
 ## Requisitos
 
 - JDK 17 ou superior;
