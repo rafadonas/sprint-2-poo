@@ -29,7 +29,7 @@ public class EquipeManutencao {
     private String especialidade;
 
     @Convert(converter = SimNaoBooleanConverter.class)
-    @Column(name = "ATIVA", nullable = false, length = 1)
+    @Column(name = "ATIVA", nullable = false, length = 1, columnDefinition = "CHAR(1)")
     private boolean ativa;
 
     protected EquipeManutencao() {

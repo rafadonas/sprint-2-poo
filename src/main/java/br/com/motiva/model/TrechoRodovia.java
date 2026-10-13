@@ -37,7 +37,7 @@ public class TrechoRodovia {
     private TipoClima clima;
 
     @Convert(converter = SimNaoBooleanConverter.class)
-    @Column(name = "MONITORADO", nullable = false, length = 1)
+    @Column(name = "MONITORADO", nullable = false, length = 1, columnDefinition = "CHAR(1)")
     private boolean monitorado;
 
     protected TrechoRodovia() {
