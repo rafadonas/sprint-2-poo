@@ -1,0 +1,50 @@
+@baseUrl = http://localhost:8080
+
+### 1. Criar equipe
+POST {{baseUrl}}/api/equipes
+Content-Type: application/json
+
+{
+  "nome": "Equipe Demonstração",
+  "especialidade": "Roçada mecanizada",
+  "ativa": true
+}
+
+### 2. Listar equipes
+GET {{baseUrl}}/api/equipes
+
+### 3. Criar trecho
+POST {{baseUrl}}/api/trechos
+Content-Type: application/json
+
+{
+  "km": 99,
+  "alturaVegetacao": 52.00,
+  "clima": "UMIDO",
+  "monitorado": true
+}
+
+### 4. Listar trechos por altura mínima
+GET {{baseUrl}}/api/trechos?alturaMinima=40
+
+### 5. Criar intervenção (ajuste os ids conforme as respostas anteriores)
+POST {{baseUrl}}/api/intervencoes
+Content-Type: application/json
+
+{
+  "trechoId": 1,
+  "equipeId": 1,
+  "tipo": "Roçada Mecanizada",
+  "descricao": "Vegetação acima do limite urgente.",
+  "dataAgendada": "2030-10-15",
+  "status": "PLANEJADA"
+}
+
+### 6. Gerar e persistir relatório
+POST {{baseUrl}}/api/relatorios
+
+### 7. Consultar histórico
+GET {{baseUrl}}/api/relatorios
+
+### 8. Consultar histórico por período
+GET {{baseUrl}}/api/relatorios/periodo?inicio=2026-01-01T00:00:00&fim=2030-12-31T23:59:59
