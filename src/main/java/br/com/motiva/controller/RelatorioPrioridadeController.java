@@ -3,15 +3,14 @@ package br.com.motiva.controller;
 import br.com.motiva.dto.RelatorioResponse;
 import br.com.motiva.service.RelatorioPrioridadeService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,11 +27,7 @@ public class RelatorioPrioridadeController {
     @PostMapping
     public ResponseEntity<RelatorioResponse> gerar() {
         RelatorioResponse gerado = service.gerar();
-        URI localizacao = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(gerado.id())
-                .toUri();
-        return ResponseEntity.created(localizacao).body(gerado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(gerado);
     }
 
     @GetMapping
